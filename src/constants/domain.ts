@@ -1,14 +1,14 @@
 import { BUILD_MODE_TABLE } from "./../types/buildMode";
 
 const REPLY_MODULE_DOMAIN_TABLE = {
-  production: "https://reply-module.darass.co.kr",
-  development: "https://dev-reply-module.darass.co.kr",
+  production: "https://darass-module.netlify.app",
+  development: "https://darass-module.netlify.app",
   localhost: "https://localhost:3000"
 } as BUILD_MODE_TABLE;
 
 const MANAGE_DOMAIN_TABLE = {
-  production: "https://darass.co.kr",
-  development: "https://dev.darass.co.kr",
+  production: "https://darass.netlify.app",
+  development: "https://darass.netlify.app",
   localhost: "https://localhost:3001"
 } as BUILD_MODE_TABLE;
 
