@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/react";
 import { useEffect } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Nav from "./components/organisms/Nav";
@@ -76,21 +75,19 @@ const App = () => {
         value={{ recentlyAlarmContent, hasNewAlarmOnRealTime, setHasNewAlarmOnRealTime }}
       >
         <Nav />
-        <Sentry.ErrorBoundary fallback={<ErrorPage notice="에러가 발생했습니다." />}>
-          <Switch>
-            <Route exact path={ROUTE.COMMON.HOME} component={LoadableHome} />
-            <Route exact path={ROUTE.COMMON.ABOUT} component={About} />
-            {isActiveAccessToken &&
-              authorizedRoute.map(({ path, component }) => {
-                return <Route exact key={path} path={path} component={component} />;
-              })}
-            {!isActiveAccessToken &&
-              nonAuthorizedRoute.map(({ path, component }) => {
-                return <Route exact key={path} path={path} component={component} />;
-              })}
-            <Redirect to={isActiveAccessToken ? ROUTE.AUTHORIZED.MY_PROJECT : ROUTE.COMMON.HOME} />
-          </Switch>
-        </Sentry.ErrorBoundary>
+        <Switch>
+          <Route exact path={ROUTE.COMMON.HOME} component={LoadableHome} />
+          <Route exact path={ROUTE.COMMON.ABOUT} component={About} />
+          {isActiveAccessToken &&
+            authorizedRoute.map(({ path, component }) => {
+              return <Route exact key={path} path={path} component={component} />;
+            })}
+          {!isActiveAccessToken &&
+            nonAuthorizedRoute.map(({ path, component }) => {
+              return <Route exact key={path} path={path} component={component} />;
+            })}
+          <Redirect to={isActiveAccessToken ? ROUTE.AUTHORIZED.MY_PROJECT : ROUTE.COMMON.HOME} />
+        </Switch>
       </RecentlyAlarmContentContext.Provider>
     </UserContext.Provider>
   );

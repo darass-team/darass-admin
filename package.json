@@ -52,8 +52,6 @@
   },
   "dependencies": {
     "@loadable/component": "^5.15.0",
-    "@sentry/react": "^6.11.0",
-    "@sentry/tracing": "^6.11.0",
     "@stomp/stompjs": "^6.1.2",
     "axios": "^0.21.1",
     "chart.js": "2.9.4",
