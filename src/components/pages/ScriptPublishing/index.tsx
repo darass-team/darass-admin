@@ -5,7 +5,7 @@ import DarkModeToggleButton from "@/components/molecules/DarkModeToggleButton";
 import GuideStep from "@/components/molecules/GuideStep";
 import ContainerWithSideBar from "@/components/organisms/ContainerWithSideBar";
 import { GUIDE_FILE, PROJECT_MENU, ROUTE } from "@/constants";
-import { REPLY_MODULE_DOMAIN } from "@/constants/domain";
+import { DEPLOY_SCRIPT_DOMAIN } from "@/constants/domain";
 import { PALETTE } from "@/constants/styles/palette";
 import { useCopyButton, useDocumentTitle, useGetProject } from "@/hooks";
 import Darass from "darass-react";
@@ -61,7 +61,7 @@ const htmlScriptCode = ({
         var $document = document;
 
         var $script = $document.createElement("script");
-        $script.src = "${REPLY_MODULE_DOMAIN}/embed.js";
+        $script.src = "${DEPLOY_SCRIPT_DOMAIN}/embed.js";
         $script.defer = true;
 
         $document.head.appendChild($script);
