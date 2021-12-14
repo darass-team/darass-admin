@@ -1,9 +1,9 @@
 import { BUILD_MODE_TABLE } from "../types/buildMode";
 
 const BASE_URL_TABLE = {
-  localhost: "https://mig-api.darass.co.kr",
-  development: "https://mig-api.darass.co.kr",
-  production: "https://mig-api.darass.co.kr"
+  localhost: "https://api.darass.co.kr",
+  development: "https://api.darass.co.kr",
+  production: "https://api.darass.co.kr"
 } as BUILD_MODE_TABLE;
 
 export const BASE_URL = BASE_URL_TABLE[process.env.BUILD_MODE as keyof BUILD_MODE_TABLE];
