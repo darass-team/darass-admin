@@ -12,7 +12,7 @@ const MANAGE_DOMAIN_TABLE = {
   localhost: "https://localhost:3001"
 } as BUILD_MODE_TABLE;
 
-export const CLIENT_ASSET_DOMAIN = "https://d257w05ca5bz5h.cloudfront.net";
+export const CLIENT_ASSET_DOMAIN = "https://darass-client-assets.netlify.app";
 
 export const REPLY_MODULE_DOMAIN = REPLY_MODULE_DOMAIN_TABLE[process.env.BUILD_MODE as keyof BUILD_MODE_TABLE];
 
