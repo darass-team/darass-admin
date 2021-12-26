@@ -80,6 +80,10 @@ const Home = () => {
 
   const moveLoginPage = () => {
     history.push(user ? ROUTE.AUTHORIZED.MY_PROJECT : ROUTE.NON_AUTHORIZED.LOGIN);
+
+    if (Notification.permission === "granted") {
+      new Notification("환영합니다!");
+    }
   };
 
   return (
