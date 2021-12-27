@@ -1,8 +1,8 @@
 import { BUILD_MODE_TABLE } from "../types/buildMode";
 
 const BASE_URL_TABLE = {
-  localhost: "https://api.darass.co.kr",
-  development: "https://api.darass.co.kr",
+  localhost: "https://dev-api.darass.co.kr",
+  development: "https://dev-api.darass.co.kr",
   production: "https://api.darass.co.kr"
 } as BUILD_MODE_TABLE;
 

@@ -50,6 +50,7 @@ const App = () => {
     setUser,
     isFetched
   } = useUser();
+  
   const { recentlyAlarmContent, hasNewAlarmOnRealTime, setHasNewAlarmOnRealTime } = useRecentlyAlarmWebSocket({ user });
 
   useEffect(() => {

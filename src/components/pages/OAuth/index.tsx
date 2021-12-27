@@ -11,7 +11,7 @@ const OAuth = () => {
   const { provider } = useParams<{ provider: string }>();
   const urlSearchParams = new URLSearchParams(location.search);
   const code = urlSearchParams.get("code");
-  const { refetchAccessToken, accessToken } = useUserContext();
+  const { refetchAccessToken } = useUserContext();
 
   useEffect(() => {
     if (!code) {

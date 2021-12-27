@@ -8,14 +8,33 @@ import { getLocalStorage, removeLocalStorage, setLocalStorage } from "@/utils/lo
 import { request } from "@/utils/request";
 import axios from "axios";
 import { useEffect } from "react";
-import { useMutation } from "simple-react-query";
-import { useQuery } from "simple-react-query";
+import { useMutation, useQuery } from "simple-react-query";
 
 export const deleteRefreshToken = async () => {
   try {
     const response = await request.delete(QUERY.LOGOUT);
 
     return response.data;
+  } catch (error) {
+    if (!axios.isAxiosError(error)) {
+      throw new AlertError("알 수 없는 에러입니다.");
+    }
+
+    throw new AlertError("로그아웃에 실패하였습니다.");
+  }
+};
+
+interface GetAccessTokenByOauthProps {
+  oauthProviderName: string;
+  authorizationCode: string;
+}
+
+export const getAccessTokenByOauth = async (props: GetAccessTokenByOauthProps) => {
+  try {
+    const response = await request.post(QUERY.LOGIN, { ...props });
+    const { accessToken, refreshToken } = response.data;
+
+    // TODO: accessToken, refreshToken localStorage에 저장하기
   } catch (error) {
     if (!axios.isAxiosError(error)) {
       throw new AlertError("알 수 없는 에러입니다.");
@@ -115,6 +134,17 @@ export const useUser = () => {
       axiosBearerOption.clear();
     }
   });
+
+  const requestAccessToken = async (provider: string, code: string) => {
+    try {
+      await request.post(QUERY.LOGIN, {
+        oauthProviderName: provider,
+        authorizationCode: code
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const refetchAccessToken = async () => {
     await _refetchAccessToken();
