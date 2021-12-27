@@ -1,66 +1,12 @@
 import { QUERY } from "@/constants";
 import { NO_ACCESS_TOKEN } from "@/constants/errorName";
-import { TOKEN_REFETCH_TIMER } from "@/constants/timer";
 import { User } from "@/types/user";
 import { AlertError } from "@/utils/alertError";
-import { axiosBearerOption } from "@/utils/customAxios";
 import { getLocalStorage, removeLocalStorage, setLocalStorage } from "@/utils/localStorage";
 import { request } from "@/utils/request";
 import axios from "axios";
 import { useEffect } from "react";
-import { useMutation, useQuery } from "simple-react-query";
-
-export const deleteRefreshToken = async () => {
-  try {
-    const response = await request.delete(QUERY.LOGOUT);
-
-    return response.data;
-  } catch (error) {
-    if (!axios.isAxiosError(error)) {
-      throw new AlertError("알 수 없는 에러입니다.");
-    }
-
-    throw new AlertError("로그아웃에 실패하였습니다.");
-  }
-};
-
-interface GetAccessTokenByOauthProps {
-  oauthProviderName: string;
-  authorizationCode: string;
-}
-
-export const getAccessTokenByOauth = async (props: GetAccessTokenByOauthProps) => {
-  try {
-    const response = await request.post(QUERY.LOGIN, { ...props });
-    const { accessToken, refreshToken } = response.data;
-
-    // TODO: accessToken, refreshToken localStorage에 저장하기
-  } catch (error) {
-    if (!axios.isAxiosError(error)) {
-      throw new AlertError("알 수 없는 에러입니다.");
-    }
-
-    throw new AlertError("로그아웃에 실패하였습니다.");
-  }
-};
-
-export const getAccessTokenByRefreshToken = async () => {
-  try {
-    const response = await request.post(QUERY.LOGIN_REFRESH, {});
-    const { accessToken } = response.data;
-    axiosBearerOption.clear();
-    axiosBearerOption.setAccessToken(accessToken);
-
-    return accessToken;
-  } catch (error) {
-    axiosBearerOption.clear();
-    if (!axios.isAxiosError(error)) {
-      throw new AlertError("알 수 없는 에러입니다.");
-    }
-
-    throw new Error("액세스 토큰 재발급에 실패하셨습니다.");
-  }
-};
+import { useQuery } from "simple-react-query";
 
 const getUser = async () => {
   try {
@@ -83,36 +29,16 @@ const getUser = async () => {
   }
 };
 
-const useGetAccessTokenApi = () => {
-  const {
-    data: accessToken,
-    refetch: refetchAccessToken,
-    error: accessTokenError,
-    setData: setAccessToken,
-    clearRefetchInterval
-  } = useQuery<string | undefined>({
-    query: getAccessTokenByRefreshToken,
-    enabled: false,
-    refetchInterval: TOKEN_REFETCH_TIMER
-  });
-
-  return {
-    accessToken,
-    refetchAccessToken,
-    accessTokenError,
-    setAccessToken,
-    clearRefetchInterval
-  };
-};
+interface Props {}
 
 export const useUser = () => {
-  const {
-    accessToken,
-    refetchAccessToken: _refetchAccessToken,
-    accessTokenError,
-    setAccessToken,
-    clearRefetchInterval
-  } = useGetAccessTokenApi();
+  // const {
+  //   accessToken,
+  //   refetchAccessToken: _refetchAccessToken,
+  //   accessTokenError,
+  //   setAccessToken,
+  //   clearRefetchInterval
+  // } = useGetAccessTokenApi();
 
   const {
     data: user,
@@ -126,25 +52,6 @@ export const useUser = () => {
     query: getUser,
     enabled: false
   });
-
-  const { mutation: deleteMutation } = useMutation<void, void>({
-    query: deleteRefreshToken,
-    onSuccess: () => {
-      setAccessToken(undefined);
-      axiosBearerOption.clear();
-    }
-  });
-
-  const requestAccessToken = async (provider: string, code: string) => {
-    try {
-      await request.post(QUERY.LOGIN, {
-        oauthProviderName: provider,
-        authorizationCode: code
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const refetchAccessToken = async () => {
     await _refetchAccessToken();

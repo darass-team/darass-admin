@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Nav from "./components/organisms/Nav";
 import About from "./components/pages/About";
-import ErrorPage from "./components/pages/ErrorPage";
 import {
   LoadableHome,
   LoadableManage,
@@ -50,7 +49,7 @@ const App = () => {
     setUser,
     isFetched
   } = useUser();
-  
+
   const { recentlyAlarmContent, hasNewAlarmOnRealTime, setHasNewAlarmOnRealTime } = useRecentlyAlarmWebSocket({ user });
 
   useEffect(() => {
