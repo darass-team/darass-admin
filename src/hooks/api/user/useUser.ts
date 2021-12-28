@@ -53,72 +53,82 @@ export const useUser = () => {
     enabled: false
   });
 
-  const refetchAccessToken = async () => {
-    await _refetchAccessToken();
-    await refetchUser();
-  };
-
-  const removeAccessToken = () => {
-    deleteMutation();
-    removeLocalStorage("active");
-    clearRefetchInterval();
-  };
-
-  const logout = () => {
-    removeAccessToken();
-    setUser(undefined);
-  };
-
-  const isActiveAccessToken = getLocalStorage("active");
-
-  const actionWhenAccessTokenChange = () => {
-    if (!accessToken) setUser(undefined);
-    else {
-      setLocalStorage("active", true);
-      refetchUser();
-    }
-  };
-
-  const actionInitAccessToken = () => {
-    if (isActiveAccessToken) {
-      refetchAccessToken();
-    } else {
-      logout();
-      clearRefetchInterval();
-    }
-  };
-
-  useEffect(() => {
-    actionInitAccessToken();
-  }, []);
-
-  useEffect(() => {
-    if (accessTokenError) {
-      logout();
-    }
-  }, [accessTokenError]);
-
-  useEffect(() => {
-    actionWhenAccessTokenChange();
-  }, [accessToken]);
-
-  useEffect(() => {
-    if (error) {
-      logout();
-    }
-  }, [error]);
-
   return {
     user,
-    accessToken,
-    refetchAccessToken,
     isLoading,
     error,
     refetchUser,
-    logout,
     isSuccess,
     setUser,
-    isActiveAccessToken,
     isFetched
+  };
+
+  // const refetchAccessToken = async () => {
+  //   await _refetchAccessToken();
+  //   await refetchUser();
+  // };
+
+  // const removeAccessToken = () => {
+  //   deleteMutation();
+  //   removeLocalStorage("active");
+  //   clearRefetchInterval();
+  // };
+
+  // const logout = () => {
+  //   removeAccessToken();
+  //   setUser(undefined);
+  // };
+
+  // const isActiveAccessToken = getLocalStorage("active");
+
+  // const actionWhenAccessTokenChange = () => {
+  //   if (!accessToken) setUser(undefined);
+  //   else {
+  //     setLocalStorage("active", true);
+  //     refetchUser();
+  //   }
+  // };
+
+  // const actionInitAccessToken = () => {
+  //   if (isActiveAccessToken) {
+  //     refetchAccessToken();
+  //   } else {
+  //     logout();
+  //     clearRefetchInterval();
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   actionInitAccessToken();
+  // }, []);
+
+  // useEffect(() => {
+  //   if (accessTokenError) {
+  //     logout();
+  //   }
+  // }, [accessTokenError]);
+
+  // useEffect(() => {
+  //   actionWhenAccessTokenChange();
+  // }, [accessToken]);
+
+  // useEffect(() => {
+  //   if (error) {
+  //     logout();
+  //   }
+  // }, [error]);
+
+  return {
+    // user,
+    // accessToken,
+    // refetchAccessToken,
+    // isLoading,
+    // error,
+    // refetchUser,
+    // logout,
+    // isSuccess,
+    // setUser,
+    // isActiveAccessToken,
+    // isFetched
   };
 };

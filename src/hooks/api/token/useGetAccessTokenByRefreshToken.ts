@@ -6,9 +6,13 @@ import { request } from "@/utils/request";
 import axios from "axios";
 import { useQuery } from "simple-react-query";
 
-export const getAccessTokenByRefreshToken = async () => {
+interface GetAccessTokenByRefreshTokenProps {
+  refreshToken: string;
+}
+
+export const getAccessTokenByRefreshToken = async ({ refreshToken }: GetAccessTokenByRefreshTokenProps) => {
   try {
-    const response = await request.post(QUERY.LOGIN_REFRESH, {});
+    const response = await request.post(QUERY.LOGIN_REFRESH, { refreshToken });
     const { accessToken } = response.data;
     axiosBearerOption.clear();
     axiosBearerOption.setAccessToken(accessToken);
@@ -24,24 +28,19 @@ export const getAccessTokenByRefreshToken = async () => {
   }
 };
 
-export const useGetAccessTokenByRefreshToken = () => {
-  const {
-    data: accessToken,
-    refetch: refetchAccessToken,
-    error: accessTokenError,
-    setData: setAccessToken,
-    clearRefetchInterval
-  } = useQuery<string | undefined>({
-    query: getAccessTokenByRefreshToken,
+interface Props extends GetAccessTokenByRefreshTokenProps {}
+
+export const useGetAccessTokenByRefreshToken = ({ refreshToken }: Props) => {
+  const { refetch, error, setData, clearRefetchInterval } = useQuery<string | undefined>({
+    query: () => getAccessTokenByRefreshToken({ refreshToken }),
     enabled: false,
     refetchInterval: TOKEN_REFETCH_TIMER
   });
 
   return {
-    accessToken,
-    refetchAccessToken,
-    accessTokenError,
-    setAccessToken,
+    refetch,
+    accessTokenError: error,
+    setAccessToken: setData,
     clearRefetchInterval
   };
 };

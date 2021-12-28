@@ -1,5 +1,6 @@
 import { QUERY } from "@/constants";
 import { AlertError } from "@/utils/alertError";
+import { axiosBearerOption } from "@/utils/customAxios";
 import { setLocalStorage } from "@/utils/localStorage";
 import { request } from "@/utils/request";
 import axios from "axios";
@@ -14,12 +15,14 @@ export const getAccessTokenByOauth = async (props: GetAccessTokenByOauthProps) =
   try {
     const response = await request.post(QUERY.LOGIN, { ...props });
     const { accessToken, refreshToken } = response.data;
+    axiosBearerOption.clear();
+    axiosBearerOption.setAccessToken(accessToken);
 
-    return {
-      accessToken,
-      refreshToken
-    };
+    setLocalStorage("refreshToken", refreshToken);
+
+    return accessToken;
   } catch (error) {
+    axiosBearerOption.clear();
     if (!axios.isAxiosError(error)) {
       throw new AlertError("알 수 없는 에러입니다.");
     }
@@ -28,22 +31,17 @@ export const getAccessTokenByOauth = async (props: GetAccessTokenByOauthProps) =
   }
 };
 
-export const useGetAccessTokenByOauth = () => {
-  const { data, error } = useQuery<{
-    accessToken: string;
-    refreshToken: string;
-  }>({
-    query: getAccessTokenByOauth,
+interface Props extends GetAccessTokenByOauthProps {}
+
+export const useGetAccessTokenByOauth = (props: Props) => {
+  const { data, error, refetch } = useQuery<string>({
+    query: () => getAccessTokenByOauth(props),
     enabled: false
   });
 
-  const { accessToken, refreshToken } = data;
-
-  setLocalStorage("accessToken", accessToken);
-  setLocalStorage("refreshToken", refreshToken);
-
   return {
-    data,
-    error
+    accessToken: data,
+    error,
+    refetch
   };
 };
