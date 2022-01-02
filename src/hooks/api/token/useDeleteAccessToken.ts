@@ -31,10 +31,3 @@ export const useDeleteAccessToken = ({ onSuccess }: Props) => {
 
   return { deleteMutation };
 };
-
-/*
-TODO: onSuccess인자를 이것으로 내려주기  () => {
-      setAccessToken(undefined);
-      axiosBearerOption.clear();
-    }
-*/
