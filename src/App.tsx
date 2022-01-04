@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Nav from "./components/organisms/Nav";
 import About from "./components/pages/About";
-import ErrorPage from "./components/pages/ErrorPage";
 import {
   LoadableHome,
   LoadableManage,
@@ -15,11 +15,17 @@ import {
   LoadableUserProfile
 } from "./components/pages/Loadable";
 import Login from "./components/pages/Login";
+import Notice from "./components/pages/Notice";
 import OAuth from "./components/pages/OAuth";
-import { ROUTE } from "./constants";
+import { QUERY, ROUTE } from "./constants";
 import { RecentlyAlarmContentContext } from "./context/recentlyAlarmContentContext";
 import { UserContext } from "./context/userContext";
 import { useRecentlyAlarmWebSocket, useUser } from "./hooks";
+import { useDeleteAccessToken } from "./hooks/api/token/useDeleteAccessToken";
+import { AlertError } from "./utils/alertError";
+import { axiosBearerOption } from "./utils/customAxios";
+import { getLocalStorage, removeLocalStorage, setLocalStorage } from "./utils/localStorage";
+import { request } from "./utils/request";
 
 const nonAuthorizedRoute = [
   { path: ROUTE.NON_AUTHORIZED.OAUTH, component: OAuth },
@@ -38,19 +44,62 @@ const authorizedRoute = [
 ];
 
 const App = () => {
-  const {
-    user,
-    logout,
-    refetchUser,
-    isLoading,
-    isSuccess,
-    isActiveAccessToken,
-    refetchAccessToken,
-    accessToken,
-    setUser,
-    isFetched
-  } = useUser();
+  const { user, refetchUser, isLoading, isSuccess, setUser, isFetched } = useUser();
+  const [accessToken, setAccessToken] = useState<string | undefined>();
+  const isActiveAccessToken = !!getLocalStorage("active");
+
+  const { deleteMutation } = useDeleteAccessToken({
+    onSuccess: () => {
+      setAccessToken(undefined);
+      axiosBearerOption.clear();
+    }
+  });
+
   const { recentlyAlarmContent, hasNewAlarmOnRealTime, setHasNewAlarmOnRealTime } = useRecentlyAlarmWebSocket({ user });
+
+  const getAccessTokenByRefreshToken = async (refreshToken: string) => {
+    try {
+      const response = await request.post(QUERY.LOGIN_REFRESH, { refreshToken });
+
+      const { accessToken } = response.data;
+      axiosBearerOption.clear();
+      axiosBearerOption.setAccessToken(accessToken);
+
+      return accessToken;
+    } catch (error) {
+      axiosBearerOption.clear();
+      if (!axios.isAxiosError(error)) {
+        logout();
+        throw new AlertError("알 수 없는 에러입니다.");
+      }
+
+      throw new Error("액세스 토큰 재발급에 실패하셨습니다.");
+    }
+  };
+
+  const refetchAccessToken = async () => {
+    const refreshToken = getLocalStorage("refreshToken");
+    const accessToken = await getAccessTokenByRefreshToken(refreshToken);
+
+    setAccessToken(accessToken);
+
+    await refetchUser();
+  };
+
+  const removeAccessToken = () => {
+    deleteMutation();
+    removeLocalStorage("active");
+    removeLocalStorage("refreshToken");
+  };
+
+  const logout = () => {
+    removeAccessToken();
+    setUser(undefined);
+  };
+
+  useEffect(() => {
+    if (isActiveAccessToken) refetchAccessToken();
+  }, [isActiveAccessToken]);
 
   useEffect(() => {
     LoadableHome.preload();
@@ -78,6 +127,7 @@ const App = () => {
         <Switch>
           <Route exact path={ROUTE.COMMON.HOME} component={LoadableHome} />
           <Route exact path={ROUTE.COMMON.ABOUT} component={About} />
+          <Route exact path={ROUTE.COMMON.NOTICE} component={Notice} />
           {isActiveAccessToken &&
             authorizedRoute.map(({ path, component }) => {
               return <Route exact key={path} path={path} component={component} />;
