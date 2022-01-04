@@ -27,8 +27,6 @@ const getUser = async () => {
   }
 };
 
-interface Props {}
-
 export const useUser = () => {
   const {
     data: user,

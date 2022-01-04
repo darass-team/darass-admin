@@ -1,6 +1,5 @@
 import { QUERY } from "@/constants";
 import { AlertError } from "@/utils/alertError";
-import { axiosBearerOption } from "@/utils/customAxios";
 import { request } from "@/utils/request";
 import axios from "axios";
 import { useMutation } from "simple-react-query";
