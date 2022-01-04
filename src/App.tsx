@@ -15,6 +15,7 @@ import {
   LoadableUserProfile
 } from "./components/pages/Loadable";
 import Login from "./components/pages/Login";
+import Notice from "./components/pages/Notice";
 import OAuth from "./components/pages/OAuth";
 import { QUERY, ROUTE } from "./constants";
 import { RecentlyAlarmContentContext } from "./context/recentlyAlarmContentContext";
@@ -126,6 +127,7 @@ const App = () => {
         <Switch>
           <Route exact path={ROUTE.COMMON.HOME} component={LoadableHome} />
           <Route exact path={ROUTE.COMMON.ABOUT} component={About} />
+          <Route exact path={ROUTE.COMMON.NOTICE} component={Notice} />
           {isActiveAccessToken &&
             authorizedRoute.map(({ path, component }) => {
               return <Route exact key={path} path={path} component={component} />;
