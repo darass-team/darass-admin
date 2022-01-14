@@ -1,7 +1,6 @@
 import { useRef, useEffect } from "react";
 
 type Direction = "up" | "down" | "left" | "right";
-
 type FadeType = "in" | "out" | "both";
 
 interface Props {
