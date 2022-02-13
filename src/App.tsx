@@ -23,7 +23,6 @@ import { UserContext } from "./context/userContext";
 import { useRecentlyAlarmWebSocket, useUser } from "./hooks";
 import { useDeleteAccessToken } from "./hooks/api/token/useDeleteAccessToken";
 import { AlertError } from "./utils/alertError";
-import { axiosBearerOption } from "./utils/customAxios";
 import { getLocalStorage, removeLocalStorage, setLocalStorage } from "./utils/localStorage";
 import { request } from "./utils/request";
 
@@ -51,7 +50,7 @@ const App = () => {
   const { deleteMutation } = useDeleteAccessToken({
     onSuccess: () => {
       setAccessToken(undefined);
-      axiosBearerOption.clear();
+      removeLocalStorage("accessToken");
     }
   });
 
@@ -62,12 +61,11 @@ const App = () => {
       const response = await request.post(QUERY.LOGIN_REFRESH, { refreshToken });
 
       const { accessToken } = response.data;
-      axiosBearerOption.clear();
-      axiosBearerOption.setAccessToken(accessToken);
+      setLocalStorage("accessToken", accessToken);
 
       return accessToken;
     } catch (error) {
-      axiosBearerOption.clear();
+      removeLocalStorage("accessToken");
       logout();
 
       if (!axios.isAxiosError(error)) {
@@ -99,7 +97,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (isActiveAccessToken) refetchAccessToken();
+    if (isActiveAccessToken) refetchUser();
   }, [isActiveAccessToken]);
 
   useEffect(() => {
