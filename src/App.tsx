@@ -43,7 +43,7 @@ const authorizedRoute = [
 ];
 
 const App = () => {
-  const { user, refetchUser, isLoading, isSuccess, setUser, isFetched } = useUser();
+  const { user, refetchUser, isLoading, isSuccess, setUser, isFetched, error } = useUser();
   const [accessToken, setAccessToken] = useState<string | undefined>();
   const isActiveAccessToken = !!getLocalStorage("active");
 
@@ -110,6 +110,12 @@ const App = () => {
   useEffect(() => {
     LoadableHome.preload();
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      logout();
+    }
+  }, [error]);
 
   return (
     <UserContext.Provider
