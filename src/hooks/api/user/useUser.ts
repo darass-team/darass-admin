@@ -23,9 +23,23 @@ const getUser = async () => {
       throw newError;
     }
 
+    if (error.response?.data.code === 808) {
+      const newError = new Error("액세스 토큰이 만료되었습니다.");
+      newError.name = "expiredAccessToken";
+
+      throw newError;
+    }
+
     if (error.response?.data.code === 806) {
       const newError = new Error("액세스 토큰이 존재하지 않습니다.");
       newError.name = NO_ACCESS_TOKEN;
+
+      throw newError;
+    }
+
+    if (error.response?.data.code === 810) {
+      const newError = new Error("이미 유효한 액세스토큰이 있습니다.");
+      newError.name = "alreadyHasAccessToken";
 
       throw newError;
     }
