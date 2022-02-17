@@ -44,6 +44,13 @@ const getUser = async () => {
       throw newError;
     }
 
+    if (error.response?.data.code === 809 || error.response?.data.code === 807) {
+      const newError = new Error("리프레시 토큰 에러");
+      newError.name = "refreshToken error";
+
+      throw newError;
+    }
+
     throw new AlertError("유저정보 조회에 실패하였습니다.\n잠시 후 다시 시도해주세요.");
   }
 };

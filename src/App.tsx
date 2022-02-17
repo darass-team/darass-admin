@@ -47,7 +47,7 @@ const App = () => {
   const [accessToken, setAccessToken] = useState<string | undefined>();
   const isActiveAccessToken = !!getLocalStorage("active");
 
-  const { deleteMutation, isDeleteError } = useDeleteAccessToken({
+  const { deleteMutation, deleteError } = useDeleteAccessToken({
     onSuccess: () => {
       setAccessToken(undefined);
       removeLocalStorage("active");
@@ -84,6 +84,14 @@ const App = () => {
       }
 
       if (error.response?.data.code === 810) {
+        logout();
+      }
+
+      if (error.response?.data.code === 809) {
+        logout();
+      }
+
+      if (error.response?.data.code === 807) {
         logout();
       }
     }
@@ -132,13 +140,14 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (!isDeleteError) return;
+    if (!deleteError) return;
 
     setAccessToken(undefined);
     removeLocalStorage("active");
     removeLocalStorage("refreshToken");
     removeLocalStorage("accessToken");
-  }, [isDeleteError]);
+    setUser(undefined);
+  }, [deleteError]);
 
   return (
     <UserContext.Provider

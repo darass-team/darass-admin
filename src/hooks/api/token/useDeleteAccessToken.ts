@@ -23,10 +23,10 @@ interface Props {
 }
 
 export const useDeleteAccessToken = ({ onSuccess }: Props) => {
-  const { mutation: deleteMutation, isError } = useMutation<void, void>({
+  const { mutation: deleteMutation, error } = useMutation<void, void>({
     query: deleteRefreshToken,
     onSuccess
   });
 
-  return { deleteMutation, isDeleteError: isError };
+  return { deleteMutation, deleteError: error };
 };
