@@ -1,6 +1,5 @@
 import { QUERY, ROUTE } from "@/constants";
 import { useUserContext } from "@/hooks/context/useUserContext";
-import { axiosBearerOption } from "@/utils/customAxios";
 import { setLocalStorage } from "@/utils/localStorage";
 import { request } from "@/utils/request";
 import { useEffect } from "react";
@@ -29,9 +28,7 @@ const OAuth = () => {
 
         const { accessToken, refreshToken } = response.data;
 
-        axiosBearerOption.clear();
-        axiosBearerOption.setAccessToken(accessToken);
-
+        setLocalStorage("accessToken", accessToken);
         setLocalStorage("refreshToken", refreshToken);
         setLocalStorage("active", true);
 

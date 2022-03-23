@@ -23,7 +23,6 @@ import { UserContext } from "./context/userContext";
 import { useRecentlyAlarmWebSocket, useUser } from "./hooks";
 import { useDeleteAccessToken } from "./hooks/api/token/useDeleteAccessToken";
 import { AlertError } from "./utils/alertError";
-import { axiosBearerOption } from "./utils/customAxios";
 import { getLocalStorage, removeLocalStorage, setLocalStorage } from "./utils/localStorage";
 import { request } from "./utils/request";
 
@@ -44,14 +43,16 @@ const authorizedRoute = [
 ];
 
 const App = () => {
-  const { user, refetchUser, isLoading, isSuccess, setUser, isFetched } = useUser();
+  const { user, refetchUser, isLoading, isSuccess, setUser, isFetched, error } = useUser();
   const [accessToken, setAccessToken] = useState<string | undefined>();
   const isActiveAccessToken = !!getLocalStorage("active");
 
-  const { deleteMutation } = useDeleteAccessToken({
+  const { deleteMutation, deleteError } = useDeleteAccessToken({
     onSuccess: () => {
       setAccessToken(undefined);
-      axiosBearerOption.clear();
+      removeLocalStorage("active");
+      removeLocalStorage("refreshToken");
+      removeLocalStorage("accessToken");
     }
   });
 
@@ -62,19 +63,37 @@ const App = () => {
       const response = await request.post(QUERY.LOGIN_REFRESH, { refreshToken });
 
       const { accessToken } = response.data;
-      axiosBearerOption.clear();
-      axiosBearerOption.setAccessToken(accessToken);
+      setLocalStorage("accessToken", accessToken);
 
       return accessToken;
     } catch (error) {
-      axiosBearerOption.clear();
-      logout();
-
       if (!axios.isAxiosError(error)) {
         throw new AlertError("알 수 없는 에러입니다.");
       }
 
-      throw new Error("액세스 토큰 재발급에 실패하셨습니다.");
+      if (error.response?.data.code === 801) {
+        refetchAccessToken();
+      }
+
+      if (error.response?.data.code === 808) {
+        refetchAccessToken();
+      }
+
+      if (error.response?.data.code === 806) {
+        logout();
+      }
+
+      if (error.response?.data.code === 810) {
+        logout();
+      }
+
+      if (error.response?.data.code === 809) {
+        logout();
+      }
+
+      if (error.response?.data.code === 807) {
+        logout();
+      }
     }
   };
 
@@ -89,8 +108,6 @@ const App = () => {
 
   const removeAccessToken = () => {
     deleteMutation();
-    removeLocalStorage("active");
-    removeLocalStorage("refreshToken");
   };
 
   const logout = () => {
@@ -99,12 +116,38 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (isActiveAccessToken) refetchAccessToken();
+    if (!getLocalStorage("accessToken")) {
+      logout();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isActiveAccessToken) refetchUser();
   }, [isActiveAccessToken]);
+
+  useEffect(() => {
+    if (error) {
+      if (error.name === "expiredAccessToken") {
+        refetchAccessToken();
+      } else {
+        logout();
+      }
+    }
+  }, [error]);
 
   useEffect(() => {
     LoadableHome.preload();
   }, []);
+
+  useEffect(() => {
+    if (!deleteError) return;
+
+    setAccessToken(undefined);
+    removeLocalStorage("active");
+    removeLocalStorage("refreshToken");
+    removeLocalStorage("accessToken");
+    setUser(undefined);
+  }, [deleteError]);
 
   return (
     <UserContext.Provider
