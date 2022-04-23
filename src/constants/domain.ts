@@ -1,14 +1,16 @@
 import { BUILD_MODE_TABLE } from "./../types/buildMode";
 
 const REPLY_MODULE_DOMAIN_TABLE = {
-  production: "https://reply-module.darass.co.kr",
-  development: "https://reply-module.darass.co.kr",
+  // production: "https://reply-module.darass.co.kr",
+  production: "https://reply-module.dev.darass.co.kr",
+  development: "https://reply-module.dev.darass.co.kr",
   localhost: "https://localhost:3000"
 } as BUILD_MODE_TABLE;
 
 const MANAGE_DOMAIN_TABLE = {
-  production: "https://darass.co.kr",
-  development: "https://darass.co.kr",
+  // production: "https://darass.co.kr",
+  production: "https://dev.darass.co.kr/",
+  development: "https://dev.darass.co.kr/",
   localhost: "https://localhost:3001"
 } as BUILD_MODE_TABLE;
 

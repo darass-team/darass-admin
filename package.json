@@ -73,6 +73,7 @@
     "start:production": "cross-env BUILD_MODE=production webpack serve",
     "build": "cross-env BUILD_MODE=development webpack",
     "build:production": "cross-env BUILD_MODE=production webpack",
+    "build:development": "cross-env BUILD_MODE=development webpack",
     "build:localhost": "cross-env BUILD_MODE=localhost webpack",
     "watch": "cross-env BUILD_MODE=development webpack watch",
     "watch:production": "cross-env BUILD_MODE=production webpack watch",
