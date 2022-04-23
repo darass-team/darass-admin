@@ -20,4 +20,5 @@ export const REPLY_MODULE_DOMAIN = REPLY_MODULE_DOMAIN_TABLE[process.env.BUILD_M
 
 export const MANAGE_PAGE_DOMAIN = MANAGE_DOMAIN_TABLE[process.env.BUILD_MODE as keyof BUILD_MODE_TABLE];
 
-export const DEPLOY_SCRIPT_DOMAIN = "https://deploy-script.darass.co.kr";
+// export const DEPLOY_SCRIPT_DOMAIN = "https://deploy-script.darass.co.kr";
+export const DEPLOY_SCRIPT_DOMAIN = "https://deploy-script.dev.darass.co.kr";
