@@ -44,8 +44,7 @@ const authorizedRoute = [
 
 const App = () => {
   const { user, refetchUser, isLoading, isSuccess, setUser, isFetched, error } = useUser();
-  const [accessToken, setAccessToken] = useState<string | undefined>();
-  const isActiveAccessToken = !!getLocalStorage("active");
+  const [accessToken, setAccessToken] = useState<string | undefined>(() => getLocalStorage("active"));
 
   const { deleteMutation, deleteError } = useDeleteAccessToken({
     onSuccess: () => {
@@ -80,10 +79,6 @@ const App = () => {
       }
 
       if (error.response?.data.code === 806) {
-        logout();
-      }
-
-      if (error.response?.data.code === 810) {
         logout();
       }
 
@@ -122,8 +117,8 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (isActiveAccessToken) refetchUser();
-  }, [isActiveAccessToken]);
+    if (accessToken) refetchUser();
+  }, [accessToken]);
 
   useEffect(() => {
     if (error) {
@@ -160,7 +155,7 @@ const App = () => {
         isLoadingUserRequest: isLoading,
         isSuccessUserRequest: isSuccess,
         setUser,
-        isActiveAccessToken,
+        isActiveAccessToken: !!accessToken,
         isUserFetched: isFetched
       }}
     >
@@ -172,15 +167,15 @@ const App = () => {
           <Route exact path={ROUTE.COMMON.HOME} component={LoadableHome} />
           <Route exact path={ROUTE.COMMON.ABOUT} component={About} />
           <Route exact path={ROUTE.COMMON.NOTICE} component={Notice} />
-          {isActiveAccessToken &&
-            authorizedRoute.map(({ path, component }) => {
-              return <Route exact key={path} path={path} component={component} />;
-            })}
-          {!isActiveAccessToken &&
-            nonAuthorizedRoute.map(({ path, component }) => {
-              return <Route exact key={path} path={path} component={component} />;
-            })}
-          <Redirect to={isActiveAccessToken ? ROUTE.AUTHORIZED.MY_PROJECT : ROUTE.COMMON.HOME} />
+          {!!accessToken
+            ? authorizedRoute.map(({ path, component }) => {
+                return <Route exact key={path} path={path} component={component} />;
+              })
+            : nonAuthorizedRoute.map(({ path, component }) => {
+                return <Route exact key={path} path={path} component={component} />;
+              })}
+
+          <Redirect to={!!accessToken ? ROUTE.AUTHORIZED.MY_PROJECT : ROUTE.COMMON.HOME} />
         </Switch>
       </RecentlyAlarmContentContext.Provider>
     </UserContext.Provider>
