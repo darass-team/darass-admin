@@ -119,7 +119,7 @@ const App = () => {
       if (error.name === "expiredAccessToken") {
         refetchAccessToken();
       } else {
-        // logout();
+        logout();
       }
     }
   }, [error]);
