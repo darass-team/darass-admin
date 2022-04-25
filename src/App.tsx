@@ -111,12 +111,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (!getLocalStorage("accessToken")) {
-      logout();
-    }
-  }, []);
-
-  useEffect(() => {
     if (accessToken) refetchUser();
   }, [accessToken]);
 
@@ -125,7 +119,7 @@ const App = () => {
       if (error.name === "expiredAccessToken") {
         refetchAccessToken();
       } else {
-        logout();
+        // logout();
       }
     }
   }, [error]);
