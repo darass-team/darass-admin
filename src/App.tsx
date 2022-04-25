@@ -161,7 +161,7 @@ const App = () => {
           <Route exact path={ROUTE.COMMON.HOME} component={LoadableHome} />
           <Route exact path={ROUTE.COMMON.ABOUT} component={About} />
           <Route exact path={ROUTE.COMMON.NOTICE} component={Notice} />
-          {!!accessToken
+          {!!user
             ? authorizedRoute.map(({ path, component }) => {
                 return <Route exact key={path} path={path} component={component} />;
               })
