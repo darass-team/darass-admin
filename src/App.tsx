@@ -97,6 +97,7 @@ const App = () => {
     const accessToken = await getAccessTokenByRefreshToken(refreshToken);
 
     setAccessToken(accessToken);
+    setLocalStorage("accessToken", accessToken);
 
     await refetchUser();
   };
